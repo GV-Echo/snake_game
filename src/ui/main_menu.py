@@ -4,6 +4,7 @@ import json
 import os
 from pygame.font import Font
 from config.const import LOCALE_FILE_NAME
+from src.ui.settings_menu import SettingsMenu  # Import the SettingsMenu class
 
 
 class MainMenu:
@@ -105,8 +106,24 @@ class MainMenu:
         # TODO: Implement game start
 
     def open_settings(self):
-        print("Opening settings...")
-        # TODO: Implement settings menu
+        settings_menu = SettingsMenu(
+            self.screen_width, self.screen_height, language=self.language
+        )
+        settings_menu.running = True
+
+        while settings_menu.running:
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    settings_menu.go_back()
+
+            settings_menu.handle_events(events)
+            screen = pygame.display.get_surface()
+            settings_menu.render(screen)
+            pygame.display.flip()
 
     def exit_game(self):
         pygame.quit()

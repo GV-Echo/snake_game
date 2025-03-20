@@ -4,15 +4,41 @@
     "buttons": {
       "start_game": "Start Game",
       "settings": "Settings",
-      "exit": "Exit"
-    }
+      "exit": "Exit",
+      "music": "Music: ",
+      "language": "Language: ",
+      "apply_name": "Save",
+      "back": "Back"
+    },
+    "music_states": {
+      "on": "On",
+      "off": "Off"
+    },
+    "languages": {
+      "en": "English",
+      "ru": "Русский"
+    },
+    "settings_title": "Settings"
   },
   "ru": {
     "title": "Змейка 2025",
     "buttons": {
       "start_game": "Начать игру",
       "settings": "Настройки",
-      "exit": "Выход"
-    }
+      "exit": "Выход",
+      "music": "Музыка: ",
+      "language": "Язык: ",
+      "apply_name": "Сохранить",
+      "back": "Назад"
+    },
+    "music_states": {
+      "on": "Вкл",
+      "off": "Выкл"
+    },
+    "languages": {
+      "en": "English",
+      "ru": "Русский"
+    },
+    "settings_title": "Настройки"
   }
 }

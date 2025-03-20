@@ -1,3 +1,7 @@
+# my ignore files
+data/asset-archive/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
