@@ -1,7 +1,7 @@
 import pygame
 import os
 import json
-from config.const import LOCALE_FILE_NAME, SOUND_ICON_ON, SOUND_ICON_OFF, FLAG_ICON_EN, FLAG_ICON_RU
+from config.const import LOCALE_FILENAME, SETTINGS_FILENAME, SOUND_ICON_ON, SOUND_ICON_OFF, FLAG_ICON_EN, FLAG_ICON_RU
 
 
 class SettingsMenu:
@@ -21,11 +21,12 @@ class SettingsMenu:
         self.sound_icon_off = None
         self.flag_icon_en = None
         self.flag_icon_ru = None
+        self.load_settings()
         self.initialize()
 
     def load_locale(self):
         locale_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                                   "localization", LOCALE_FILE_NAME)
+                                   "localization", LOCALE_FILENAME)
         with open(locale_path, 'r', encoding='utf-8') as file:
             localization_data = json.load(file)
             self.texts = localization_data[self.language]
@@ -77,6 +78,26 @@ class SettingsMenu:
             "action": self.go_back
         })
 
+    def load_settings(self):
+        if os.path.exists(SETTINGS_FILENAME):
+            with open(SETTINGS_FILENAME, 'r', encoding='utf-8') as file:
+                settings = json.load(file)
+                self.language = settings.get("language", "en")
+                self.sound_enabled = settings.get("sound_enabled", True)
+                self.username = settings.get("username", "Player")
+                self.input_text = self.username
+        else:
+            self.save_settings()
+
+    def save_settings(self):
+        settings = {
+            "language": self.language,
+            "sound_enabled": self.sound_enabled,
+            "username": self.username
+        }
+        with open(SETTINGS_FILENAME, 'w', encoding='utf-8') as file:
+            json.dump(settings, file, indent=4)
+
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -97,7 +118,8 @@ class SettingsMenu:
                 elif event.key == pygame.K_BACKSPACE:
                     self.input_text = self.input_text[:-1]
                 else:
-                    self.input_text += event.unicode
+                    if len(self.input_text) < 9 and event.unicode.isalnum():
+                        self.input_text += event.unicode
 
     def render(self, screen):
         screen.fill((0, 0, 0))
@@ -133,9 +155,20 @@ class SettingsMenu:
         else:
             pygame.draw.rect(screen, (255, 255, 255), self.input_box, 1)
 
-        input_text = self.button_font.render(
-            self.input_text, True, (255, 255, 255))
-        screen.blit(input_text, (self.input_box.x + 10, self.input_box.y + 10))
+        input_font = pygame.font.Font(None, 40)
+        input_text = self.input_text
+
+        # Cut nickname if it overflow the width of the input field
+        is_cut = False
+        while input_font.size(input_text)[0] > self.input_box.width - 20:
+            input_text = input_text[1:]
+            is_cut = True
+        if is_cut:
+            input_text += "..."
+
+        input_surface = input_font.render(input_text, True, (255, 255, 255))
+        screen.blit(input_surface, (self.input_box.x +
+                    10, self.input_box.y + 10))
 
         if self.apply_button["rect"].collidepoint(mouse_pos):
             pygame.draw.rect(screen, (100, 100, 100),
@@ -153,18 +186,20 @@ class SettingsMenu:
     def toggle_sound(self):
         self.sound_enabled = not self.sound_enabled
         self.buttons[0]["icon"] = self.sound_icon_on if self.sound_enabled else self.sound_icon_off
+        self.save_settings()
 
     def toggle_language(self):
         self.language = "ru" if self.language == "en" else "en"
         self.load_locale()
         self.buttons[1]["icon"] = self.flag_icon_en if self.language == "en" else self.flag_icon_ru
-
         self.apply_button["text"] = self.texts["buttons"]["apply_name"]
         self.buttons[-1]["text"] = self.texts["buttons"]["back"]
+        self.save_settings()
 
     def apply_name(self):
         self.username = self.input_text
         print(f"Username applied: {self.username}")
+        self.save_settings()
 
     def go_back(self):
         self.running = False

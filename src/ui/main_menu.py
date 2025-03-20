@@ -3,8 +3,8 @@ import sys
 import json
 import os
 from pygame.font import Font
-from config.const import LOCALE_FILE_NAME
-from src.ui.settings_menu import SettingsMenu  # Import the SettingsMenu class
+from config.const import LOCALE_FILENAME
+from src.ui.settings_menu import SettingsMenu
 
 
 class MainMenu:
@@ -20,10 +20,10 @@ class MainMenu:
 
     def load_locale(self):
         locale_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                                   "localization", LOCALE_FILE_NAME)
+                                   "localization", LOCALE_FILENAME)
 
         if not os.path.exists(locale_path):
-            print(f"File error: {LOCALE_FILE_NAME} not found at {locale_path}")
+            print(f"File error: {LOCALE_FILENAME} not found at {locale_path}")
             pygame.quit()
             sys.exit(1)
 
@@ -124,6 +124,11 @@ class MainMenu:
             screen = pygame.display.get_surface()
             settings_menu.render(screen)
             pygame.display.flip()
+
+        self.language = settings_menu.language
+        self.texts = self.load_locale()
+        for i, button_id in enumerate(["start_game", "settings", "exit"]):
+            self.buttons[i]["text"] = self.texts["buttons"][button_id]
 
     def exit_game(self):
         pygame.quit()

@@ -1,5 +1,6 @@
-LOCALE_FILE_NAME = 'locale.json'
+LOCALE_FILENAME = 'locale.json'
 GAME_TITLE = 'SNAKE 2025'
+SETTINGS_FILENAME = 'db/settings.json'
 
 # Icons paths
 SOUND_ICON_ON = 'data/icons/sound-on.png'
