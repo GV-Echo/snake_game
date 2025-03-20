@@ -1,0 +1,18 @@
+{
+  "en": {
+    "title": "Snake 2025",
+    "buttons": {
+      "start_game": "Start Game",
+      "settings": "Settings",
+      "exit": "Exit"
+    }
+  },
+  "ru": {
+    "title": "Змейка 2025",
+    "buttons": {
+      "start_game": "Начать игру",
+      "settings": "Настройки",
+      "exit": "Выход"
+    }
+  }
+}

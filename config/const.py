@@ -1,0 +1,2 @@
+LOCALE_FILE_NAME = 'locale.json'
+GAME_TITLE = 'SNAKE 2025'
