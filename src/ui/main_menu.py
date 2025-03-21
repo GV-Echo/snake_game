@@ -2,9 +2,9 @@ import pygame
 import sys
 import json
 import os
-from pygame.font import Font
 from config.const import LOCALE_FILENAME
 from src.ui.settings_menu import SettingsMenu
+from src.game.game import Game
 
 
 class MainMenu:
@@ -102,8 +102,8 @@ class MainMenu:
             self.buttons[i]["text"] = self.texts["buttons"][button_id]
 
     def start_game(self):
-        print("Starting game...")
-        # TODO: Implement game start
+        game = Game(self.screen_width, self.screen_height)
+        game.run(pygame.display.get_surface())
 
     def open_settings(self):
         settings_menu = SettingsMenu(
