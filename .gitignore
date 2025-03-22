@@ -1,6 +1,6 @@
 # my ignore files
 data/asset-archive/
-
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

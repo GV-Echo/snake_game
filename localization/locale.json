@@ -18,7 +18,8 @@
       "en": "English",
       "ru": "Русский"
     },
-    "settings_title": "Settings"
+    "settings_title": "Settings",
+    "score_label": "SCORE"
   },
   "ru": {
     "title": "Змейка 2025",
@@ -39,6 +40,7 @@
       "en": "English",
       "ru": "Русский"
     },
-    "settings_title": "Настройки"
+    "settings_title": "Настройки",
+    "score_label": "ОЧКИ"
   }
 }
