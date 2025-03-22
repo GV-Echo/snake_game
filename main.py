@@ -26,7 +26,6 @@ def main():
 
     main_menu = MainMenu(width, height, language=language)
 
-    clock = pygame.time.Clock()
     running = True
 
     while running:
@@ -40,8 +39,6 @@ def main():
         main_menu.render(screen)
 
         pygame.display.flip()
-
-        clock.tick(60)
 
     pygame.quit()
     sys.exit()

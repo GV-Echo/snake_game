@@ -25,11 +25,6 @@ class Game:
         self.bonus_objects = []
         self.fps = 10
         self.score_multiplier = 1
-        self.max_food = 10
-        self.max_poisoned_food = 5
-        self.max_bombs = 3
-        self.max_fans = 3
-        self.max_clocks = 1
         self.spawn_intervals = {
             "Food": 5,
             "PoisonedFood": 10,
@@ -62,10 +57,10 @@ class Game:
                 elif event.key == pygame.K_RIGHT:
                     self.snake.change_direction("RIGHT")
 
-    def spawn_bonus(self, bonus_class, max_count):
+    def spawn_bonus(self, bonus_class):
+        max_count = bonus_class(self.cell_size, self.screen_width, self.screen_height).max_count
         if len([obj for obj in self.bonus_objects if isinstance(obj, bonus_class)]) < max_count:
-            new_bonus = bonus_class(
-                self.cell_size, self.screen_width, self.screen_height)
+            new_bonus = bonus_class(self.cell_size, self.screen_width, self.screen_height)
             self.bonus_objects.append(new_bonus)
 
     def update(self):
@@ -88,24 +83,24 @@ class Game:
         for bonus_type, interval in self.spawn_intervals.items():
             if current_time - self.last_spawn_time[bonus_type] > interval:
                 if bonus_type == "Food":
-                    self.spawn_bonus(Food, self.max_food)
+                    self.spawn_bonus(Food)
                 elif bonus_type == "PoisonedFood":
-                    self.spawn_bonus(PoisonedFood, self.max_poisoned_food)
+                    self.spawn_bonus(PoisonedFood)
                 elif bonus_type == "Bomb" and len(self.snake.body) < 20:
-                    self.spawn_bonus(Bomb, self.max_bombs)
+                    self.spawn_bonus(Bomb)
                 elif bonus_type == "Fan":
-                    self.spawn_bonus(Fan, self.max_fans)
+                    self.spawn_bonus(Fan)
                 elif bonus_type == "Clock":
-                    self.spawn_bonus(Clock, self.max_clocks)
+                    self.spawn_bonus(Clock)
                 elif bonus_type == "DoublePoints":
-                    self.spawn_bonus(DoublePoints, 1)
+                    self.spawn_bonus(DoublePoints)
                 elif bonus_type == "InvertedControls":
-                    self.spawn_bonus(InvertedControls, 1)
+                    self.spawn_bonus(InvertedControls)
                 self.last_spawn_time[bonus_type] = current_time
 
         self.bonus_objects = [
             obj for obj in self.bonus_objects
-            if current_time - obj.spawn_time < (30 if isinstance(obj, Bomb) else 60)
+            if time.time() - obj.spawn_time < obj.lifetime
         ]
 
         for obj in self.bonus_objects[:]:

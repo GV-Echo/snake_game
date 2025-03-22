@@ -1,11 +1,14 @@
 import random
 import time
 
-class Food:
-    def __init__(self, cell_size, screen_width, screen_height):
+class GameObject:
+    def __init__(self, cell_size, screen_width, screen_height, max_count, lifetime, spawn_interval):
         self.cell_size = cell_size
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.max_count = max_count
+        self.lifetime = lifetime
+        self.spawn_interval = spawn_interval
         self.position = (0, 0)
         self.spawn_time = time.time()
         self.spawn([])
@@ -18,32 +21,37 @@ class Food:
                 self.position = (x, y)
                 break
 
-class PoisonedFood(Food):
-    def __init__(self, cell_size, screen_width, screen_height):
-        super().__init__(cell_size, screen_width, screen_height)
-        self.spawn_time = time.time()
 
-class Bomb(Food):
+class Food(GameObject):
     def __init__(self, cell_size, screen_width, screen_height):
-        super().__init__(cell_size, screen_width, screen_height)
-        self.spawn_time = time.time()
+        super().__init__(cell_size, screen_width, screen_height, max_count=10, lifetime=60, spawn_interval=5)
 
-class Fan(Food):
-    def __init__(self, cell_size, screen_width, screen_height):
-        super().__init__(cell_size, screen_width, screen_height)
-        self.spawn_time = time.time()
 
-class Clock(Food):
+class PoisonedFood(GameObject):
     def __init__(self, cell_size, screen_width, screen_height):
-        super().__init__(cell_size, screen_width, screen_height)
-        self.spawn_time = time.time()
+        super().__init__(cell_size, screen_width, screen_height, max_count=5, lifetime=15, spawn_interval=10)
 
-class DoublePoints(Food):
-    def __init__(self, cell_size, screen_width, screen_height):
-        super().__init__(cell_size, screen_width, screen_height)
-        self.spawn_time = time.time()
 
-class InvertedControls(Food):
+class Bomb(GameObject):
     def __init__(self, cell_size, screen_width, screen_height):
-        super().__init__(cell_size, screen_width, screen_height)
-        self.spawn_time = time.time()
+        super().__init__(cell_size, screen_width, screen_height, max_count=3, lifetime=30, spawn_interval=15)
+
+
+class Fan(GameObject):
+    def __init__(self, cell_size, screen_width, screen_height):
+        super().__init__(cell_size, screen_width, screen_height, max_count=3, lifetime=15, spawn_interval=20)
+
+
+class Clock(GameObject):
+    def __init__(self, cell_size, screen_width, screen_height):
+        super().__init__(cell_size, screen_width, screen_height, max_count=1, lifetime=15, spawn_interval=25)
+
+
+class DoublePoints(GameObject):
+    def __init__(self, cell_size, screen_width, screen_height):
+        super().__init__(cell_size, screen_width, screen_height, max_count=1, lifetime=60, spawn_interval=30)
+
+
+class InvertedControls(GameObject):
+    def __init__(self, cell_size, screen_width, screen_height):
+        super().__init__(cell_size, screen_width, screen_height, max_count=1, lifetime=15, spawn_interval=35)
