@@ -3,8 +3,19 @@ class Snake:
         self.cell_size = cell_size
         self.body = [(100, 100), (80, 100), (60, 100)]
         self.direction = "RIGHT"
+        self.inverted_controls = False
 
     def change_direction(self, direction):
+        if self.inverted_controls:
+            if direction == "UP":
+                direction = "DOWN"
+            elif direction == "DOWN":
+                direction = "UP"
+            elif direction == "LEFT":
+                direction = "RIGHT"
+            elif direction == "RIGHT":
+                direction = "LEFT"
+
         # Avoiding 180 degree turns
         if (direction == "UP" and self.direction != "DOWN") or \
            (direction == "DOWN" and self.direction != "UP") or \
