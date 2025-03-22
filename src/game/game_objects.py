@@ -21,37 +21,37 @@ class GameObject:
                 self.position = (x, y)
                 break
 
-
+# Еда стандартная, увелечение змейки, макс. увелечение очков
 class Food(GameObject):
     def __init__(self, cell_size, screen_width, screen_height):
         super().__init__(cell_size, screen_width, screen_height, max_count=10, lifetime=60, spawn_interval=5)
 
-
+# Яд, уменьшение змейки, макс. уменьшие очков
 class PoisonedFood(GameObject):
     def __init__(self, cell_size, screen_width, screen_height):
         super().__init__(cell_size, screen_width, screen_height, max_count=5, lifetime=15, spawn_interval=10)
 
-
+# Бомба - сразу завершает игру
 class Bomb(GameObject):
     def __init__(self, cell_size, screen_width, screen_height):
         super().__init__(cell_size, screen_width, screen_height, max_count=3, lifetime=30, spawn_interval=15)
 
-
-class Fan(GameObject):
+# Ускорение змейки
+class Speedup(GameObject):
     def __init__(self, cell_size, screen_width, screen_height):
         super().__init__(cell_size, screen_width, screen_height, max_count=3, lifetime=15, spawn_interval=20)
 
-
+# Замедление змейки
 class Clock(GameObject):
     def __init__(self, cell_size, screen_width, screen_height):
         super().__init__(cell_size, screen_width, screen_height, max_count=1, lifetime=15, spawn_interval=25)
 
-
+# Удвоение ПОЛУЧАЕМЫХ очков
 class DoublePoints(GameObject):
     def __init__(self, cell_size, screen_width, screen_height):
         super().__init__(cell_size, screen_width, screen_height, max_count=1, lifetime=60, spawn_interval=30)
 
-
+# Инвертирование управления
 class InvertedControls(GameObject):
     def __init__(self, cell_size, screen_width, screen_height):
         super().__init__(cell_size, screen_width, screen_height, max_count=1, lifetime=15, spawn_interval=35)

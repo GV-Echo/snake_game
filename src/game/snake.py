@@ -16,7 +16,6 @@ class Snake:
             elif direction == "RIGHT":
                 direction = "LEFT"
 
-        # Avoiding 180 degree turns
         if (direction == "UP" and self.direction != "DOWN") or \
            (direction == "DOWN" and self.direction != "UP") or \
            (direction == "LEFT" and self.direction != "RIGHT") or \
