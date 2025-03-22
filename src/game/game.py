@@ -3,7 +3,7 @@ import sys
 import os
 import json
 import time
-from config.const import LOCALE_FILENAME
+from config.const import CELL_SIZE, GAME_SPEED, LOCALE_FILENAME, BACKGROUND_IMAGE
 from src.game.snake import Snake
 from src.game.game_objects import Food, PoisonedFood, Bomb, Speedup, Clock, DoublePoints, InvertedControls
 
@@ -12,20 +12,25 @@ class Game:
     def __init__(self, screen_width, screen_height, language="en"):
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.cell_size = 20
+        self.cell_size = CELL_SIZE
         self.running = True
         self.clock = pygame.time.Clock()
-        self.snake = Snake(self.cell_size)
-        self.food = Food(self.cell_size, self.screen_width, self.screen_height)
+        self.snake = Snake(
+            self.cell_size, self.screen_width, self.screen_height)
         self.score = 0
         self.language = language
         self.texts = self.load_locale()
         self.font = pygame.font.Font(None, 36)
         self.active_effects = []
-        self.bonus_objects = []
-        self.fps = 10
+        self.bonus_objects = pygame.sprite.Group()
+        self.game_speed = GAME_SPEED
         self.score_multiplier = 1
         self.last_spawn_time = {}
+
+        self.background = pygame.image.load(BACKGROUND_IMAGE).convert()
+        self.background = pygame.transform.scale(
+            self.background, (self.screen_width, self.screen_height)
+        )
 
     def load_locale(self):
         locale_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
@@ -55,17 +60,16 @@ class Game:
         if len([obj for obj in self.bonus_objects if isinstance(obj, bonus_class)]) < max_count:
             new_bonus = bonus_class(
                 self.cell_size, self.screen_width, self.screen_height)
-            self.bonus_objects.append(new_bonus)
+            self.bonus_objects.add(new_bonus)
 
     def update(self):
-        self.snake.move(self.screen_width, self.screen_height)
+        self.snake.move()
         current_time = time.time()
 
         self.spawn_food(current_time)
         self.delete_old_food(current_time)
-        self.bonus_handler(current_time)
+        self.handle_collisions()
         self.update_active_effects(current_time)
-        self.check_snake_collisions()
 
     def spawn_food(self, current_time):
         for bonus_class in [Food, PoisonedFood, Bomb, Speedup, Clock, DoublePoints, InvertedControls]:
@@ -79,80 +83,69 @@ class Game:
                 self.last_spawn_time[bonus_class] = current_time
 
     def delete_old_food(self, current_time):
-        self.bonus_objects = [
-            obj for obj in self.bonus_objects
-            if current_time - obj.spawn_time < obj.lifetime
-        ]
-
-    def bonus_handler(self, current_time):
-        for obj in self.bonus_objects[:]:
-            if self.snake.check_collision(obj.position):
-                if isinstance(obj, PoisonedFood):
-                    if len(self.snake.body) > 1:
-                        self.snake.body.pop()
-                    elif len(self.snake.body) == 1 or self.score < 0:
-                        self.score = 0
-                        self.running = False
-                    self.score -= 8
-                elif isinstance(obj, Bomb):
-                    self.running = False
-                elif isinstance(obj, Speedup):
-                    self.active_effects.append(
-                        ("Speed Boost", current_time + 15))
-                    self.score += 3 * self.score_multiplier
-                elif isinstance(obj, Clock):
-                    self.active_effects.append(
-                        ("Slow Down", current_time + 15))
-                    self.score += 3 * self.score_multiplier
-                elif isinstance(obj, DoublePoints):
-                    self.active_effects.append(
-                        ("Double Points", current_time + 60))
-                    self.score += 5 * self.score_multiplier
-                    self.score_multiplier = 2
-                elif isinstance(obj, InvertedControls):
-                    self.active_effects.append(
-                        ("Inverted Controls", current_time + 15))
-                    self.score += 9 * self.score_multiplier
-                elif isinstance(obj, Food):
-                    self.snake.grow()
-                    self.score += 10 * self.score_multiplier
+        for obj in list(self.bonus_objects):
+            if current_time - obj.spawn_time >= obj.lifetime:
                 self.bonus_objects.remove(obj)
+
+    def handle_collisions(self):
+        collided_objects = pygame.sprite.spritecollide(
+            self.snake, self.bonus_objects, dokill=True
+        )
+        for obj in collided_objects:
+            if isinstance(obj, PoisonedFood):
+                if len(self.snake.body) > 1:
+                    removed_segment = self.snake.body.pop()
+                    for sprite in self.snake.body_sprites:
+                        if sprite.rect.topleft == removed_segment:
+                            self.snake.body_sprites.remove(sprite)
+                            break
+                elif len(self.snake.body) == 1 or self.score < 0:
+                    self.score = 0
+                    self.running = False
+                self.score -= 8
+
+            elif isinstance(obj, Bomb):
+                self.running = False
+            elif isinstance(obj, Speedup):
+                self.active_effects.append(("Speed Boost", time.time() + 15))
+                self.game_speed *= 2
+                self.score += 3 * self.score_multiplier
+            elif isinstance(obj, Clock):
+                self.active_effects.append(("Slow Down", time.time() + 15))
+                self.game_speed //= 1.5
+                self.score += 3 * self.score_multiplier
+            elif isinstance(obj, DoublePoints):
+                self.active_effects.append(("Double Points", time.time() + 60))
+                self.score_multiplier = 2
+                self.score += 5 * self.score_multiplier
+            elif isinstance(obj, InvertedControls):
+                self.active_effects.append(
+                    ("Inverted Controls", time.time() + 15))
+                self.snake.inverted_controls = True
+                self.score += 9 * self.score_multiplier
+            elif isinstance(obj, Food):
+                self.snake.grow()
+                self.score += 10 * self.score_multiplier
+
+        if self.snake.check_self_collision():
+            self.running = False
 
     def update_active_effects(self, current_time):
         self.active_effects = [
             effect for effect in self.active_effects if effect[1] > current_time
         ]
         if not any(effect[0] in ["Speed Boost", "Slow Down"] for effect in self.active_effects):
-            self.fps = 10
-        if not any(effect[0] in ["Double Points"] for effect in self.active_effects):
+            self.game_speed = 10
+        if not any(effect[0] == "Double Points" for effect in self.active_effects):
             self.score_multiplier = 1
-
-    def check_snake_collisions(self):
-        if self.snake.check_self_collision() or self.snake.check_wall_collision(self.screen_width, self.screen_height):
-            self.running = False
+        if not any(effect[0] == "Inverted Controls" for effect in self.active_effects):
+            self.snake.inverted_controls = False
 
     def render(self, screen):
-        screen.fill((0, 0, 0))
-        for obj in self.bonus_objects:
-            color = (255, 0, 0)
-            if isinstance(obj, PoisonedFood):
-                color = (128, 0, 128)
-            elif isinstance(obj, Bomb):
-                color = (255, 255, 0)
-            elif isinstance(obj, Speedup):
-                color = (0, 0, 255)
-            elif isinstance(obj, Clock):
-                color = (0, 255, 255)
-            elif isinstance(obj, DoublePoints):
-                color = (255, 165, 0)
-            elif isinstance(obj, InvertedControls):
-                color = (255, 20, 147)
-            pygame.draw.rect(screen, color, pygame.Rect(
-                obj.position[0], obj.position[1], self.cell_size, self.cell_size))
+        screen.blit(self.background, (0, 0))
 
-        for segment in self.snake.body:
-            pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(
-                segment[0], segment[1], self.cell_size, self.cell_size))
+        self.bonus_objects.draw(screen)
+        self.snake.body_sprites.draw(screen)
 
         score_text = f"{self.texts['score_label']}: {self.score:04}"
         score_surface = self.font.render(score_text, True, (255, 255, 255))
@@ -173,6 +166,4 @@ class Game:
             self.update()
             self.render(screen)
             pygame.display.flip()
-            self.clock.tick(self.fps)
-        # pygame.quit()
-        # sys.exit()
+            self.clock.tick(self.game_speed)

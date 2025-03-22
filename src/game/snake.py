@@ -1,9 +1,107 @@
-class Snake:
-    def __init__(self, cell_size):
+import pygame
+from config.const import SNAKE_IMAGES
+
+
+class Snake(pygame.sprite.Sprite):
+    def __init__(self, cell_size, screen_width, screen_height):
+        super().__init__()
         self.cell_size = cell_size
+        self.screen_width = screen_width
+        self.screen_height = screen_height
         self.body = [(100, 100), (80, 100), (60, 100)]
         self.direction = "RIGHT"
         self.inverted_controls = False
+
+        self.images = {key: pygame.image.load(path).convert_alpha()
+                       for key, path in SNAKE_IMAGES.items()}
+        for key in self.images:
+            self.images[key] = pygame.transform.scale(
+                self.images[key], (cell_size, cell_size))
+
+        self.image = self.images["head_right"]
+        self.rect = self.image.get_rect(topleft=self.body[0])
+
+        self.body_sprites = pygame.sprite.Group()
+        self.update_sprites()
+
+    def update_sprites(self):
+        self.body_sprites.empty()
+        for i, segment in enumerate(self.body):
+            segment_sprite = pygame.sprite.Sprite()
+            segment_sprite.image = self.get_segment_image(i)
+            segment_sprite.rect = segment_sprite.image.get_rect(
+                topleft=segment)
+            self.body_sprites.add(segment_sprite)
+
+        self.image = self.get_segment_image(0)
+        self.rect.topleft = self.body[0]
+
+    def get_segment_image(self, index):
+        if index == 0:
+            if self.direction == "UP":
+                return self.images["head_up"]
+            elif self.direction == "DOWN":
+                return self.images["head_down"]
+            elif self.direction == "LEFT":
+                return self.images["head_left"]
+            elif self.direction == "RIGHT":
+                return self.images["head_right"]
+        elif index == len(self.body) - 1:
+            tail_direction = self.get_tail_direction()
+            return self.images[f"tail_{tail_direction}"]
+        else:
+            prev_segment = self.body[index - 1]
+            next_segment = self.body[index + 1]
+            return self.get_body_image(prev_segment, segment=self.body[index], next_segment=next_segment)
+
+    def get_tail_direction(self):
+        if len(self.body) < 2:
+            raise ValueError(
+                "Недостаточно сегментов для определения направления хвоста")
+
+        tail = self.body[-1]
+        before_tail = self.body[-2]
+
+        if tail == before_tail:
+            if self.direction == "UP":
+                return "down"
+            elif self.direction == "DOWN":
+                return "up"
+            elif self.direction == "LEFT":
+                return "right"
+            elif self.direction == "RIGHT":
+                return "left"
+
+        if tail[0] < before_tail[0]:
+            return "left"
+        elif tail[0] > before_tail[0]:
+            return "right"
+        elif tail[1] < before_tail[1]:
+            return "up"
+        elif tail[1] > before_tail[1]:
+            return "down"
+
+        raise ValueError(
+            f"Не удалось определить направление хвоста: tail={tail}, before_tail={before_tail}")
+
+    def get_body_image(self, prev_segment, segment, next_segment):
+        if prev_segment[0] == next_segment[0]:
+            return self.images["body_vertical"]
+        elif prev_segment[1] == next_segment[1]:
+            return self.images["body_horizontal"]
+        else:
+            if (prev_segment[0] < segment[0] and next_segment[1] < segment[1]) or \
+               (next_segment[0] < segment[0] and prev_segment[1] < segment[1]):
+                return self.images["body_topleft"]
+            elif (prev_segment[0] > segment[0] and next_segment[1] < segment[1]) or \
+                 (next_segment[0] > segment[0] and prev_segment[1] < segment[1]):
+                return self.images["body_topright"]
+            elif (prev_segment[0] < segment[0] and next_segment[1] > segment[1]) or \
+                 (next_segment[0] < segment[0] and prev_segment[1] > segment[1]):
+                return self.images["body_bottomleft"]
+            elif (prev_segment[0] > segment[0] and next_segment[1] > segment[1]) or \
+                 (next_segment[0] > segment[0] and prev_segment[1] > segment[1]):
+                return self.images["body_bottomright"]
 
     def change_direction(self, direction):
         if self.inverted_controls:
@@ -22,7 +120,7 @@ class Snake:
            (direction == "RIGHT" and self.direction != "LEFT"):
             self.direction = direction
 
-    def move(self, screen_width, screen_height):
+    def move(self):
         head_x, head_y = self.body[0]
         if self.direction == "UP":
             head_y -= self.cell_size
@@ -33,21 +131,26 @@ class Snake:
         elif self.direction == "RIGHT":
             head_x += self.cell_size
 
-        head_x %= screen_width
-        head_y %= screen_height
+        head_x %= self.screen_width
+        head_y %= self.screen_height
 
         self.body.insert(0, (head_x, head_y))
         self.body.pop()
 
+        self.update_sprites()
+
     def grow(self):
         self.body.append(self.body[-1])
+        self.update_sprites()
 
-    def check_collision(self, position):
-        return self.body[0] == position
+    def check_collision_with_food(self, food_group):
+        return pygame.sprite.spritecollide(self, food_group, dokill=True)
 
     def check_self_collision(self):
-        return self.body[0] in self.body[1:]
+        for segment_pos in self.body[1:]:
+            if self.body[0] == segment_pos:
+                return True
+        return False
 
-    def check_wall_collision(self, screen_width, screen_height):
-        head_x, head_y = self.body[0]
-        return head_x < 0 or head_y < 0 or head_x >= screen_width or head_y >= screen_height
+    def check_wall_collision(self):
+        return not (0 <= self.rect.left < self.screen_width and 0 <= self.rect.top < self.screen_height)
