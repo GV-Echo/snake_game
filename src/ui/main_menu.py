@@ -102,7 +102,9 @@ class MainMenu:
             self.buttons[i]["text"] = self.texts["buttons"][button_id]
 
     def start_game(self):
-        game = Game(self.screen_width, self.screen_height, language=self.language)
+        self.start_game_flag = True
+        game = Game(self.screen_width, self.screen_height,
+                    language=self.language)
         game.run(pygame.display.get_surface())
 
     def open_settings(self):

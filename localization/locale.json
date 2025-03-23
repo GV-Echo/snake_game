@@ -8,7 +8,9 @@
       "music": "Music: ",
       "language": "Language: ",
       "apply_name": "Save",
-      "back": "Back"
+      "back": "Back",
+      "restart": "Restart",
+      "menu": "Main Menu"
     },
     "music_states": {
       "on": "On",
@@ -19,7 +21,8 @@
       "ru": "Русский"
     },
     "settings_title": "Settings",
-    "score_label": "SCORE"
+    "score_label": "SCORE",
+    "game_over": "Game Over"
   },
   "ru": {
     "title": "Змейка 2025",
@@ -30,7 +33,9 @@
       "music": "Музыка: ",
       "language": "Язык: ",
       "apply_name": "Сохранить",
-      "back": "Назад"
+      "back": "Назад",
+      "restart": "Рестарт",
+      "menu": "Главное меню"
     },
     "music_states": {
       "on": "Вкл",
@@ -41,6 +46,7 @@
       "ru": "Русский"
     },
     "settings_title": "Настройки",
-    "score_label": "ОЧКИ"
+    "score_label": "ОЧКИ",
+    "game_over": "Игра окончена"
   }
 }

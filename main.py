@@ -1,6 +1,7 @@
 import pygame
 import sys
 import json
+from src.game.game import Game
 from src.ui.main_menu import MainMenu
 from config.const import GAME_TITLE, SETTINGS_FILENAME
 
@@ -24,24 +25,29 @@ def main():
     if not lang:
         lang = "en"
 
-    main_menu = MainMenu(width, height, language=lang)
+    while True:
+        main_menu = MainMenu(width, height, language=lang)
+        running = True
 
-    running = True
+        while running:
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-    while running:
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:
-                running = False
+            main_menu.handle_events(events)
+            main_menu.render(screen)
+            pygame.display.flip()
 
-        main_menu.handle_events(events)
+            if hasattr(main_menu, "start_game_flag") and main_menu.start_game_flag:
+                game = Game(width, height, language=lang)
+                result = game.run(screen)
 
-        main_menu.render(screen)
-
-        pygame.display.flip()
-
-    pygame.quit()
-    sys.exit()
+                if result == "restart":
+                    continue
+                elif result == "menu":
+                    break
 
 
 if __name__ == "__main__":

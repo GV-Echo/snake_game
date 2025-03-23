@@ -6,6 +6,7 @@ import time
 from config.const import CELL_SIZE, GAME_SPEED, LOCALE_FILENAME, BACKGROUND_IMAGE
 from src.game.snake import Snake
 from src.game.game_objects import Food, PoisonedFood, Bomb, Speedup, Clock, DoublePoints, InvertedControls
+from src.ui.death_window import DeathWindow
 
 
 class Game:
@@ -58,9 +59,28 @@ class Game:
         max_count = bonus_class(
             self.cell_size, self.screen_width, self.screen_height).max_count
         if len([obj for obj in self.bonus_objects if isinstance(obj, bonus_class)]) < max_count:
-            new_bonus = bonus_class(
-                self.cell_size, self.screen_width, self.screen_height)
-            self.bonus_objects.add(new_bonus)
+            for _ in range(3):
+                new_bonus = bonus_class(
+                    self.cell_size, self.screen_width, self.screen_height)
+
+                if any(new_bonus.rect.colliderect(obj.rect) for obj in self.bonus_objects):
+                    continue
+
+                if bonus_class == Bomb:
+                    snake_head = self.snake.body[0]
+                    snake_direction = self.snake.direction
+                    next_positions = [
+                        (snake_head[0] + self.cell_size * i, snake_head[1]) if snake_direction == "RIGHT" else
+                        (snake_head[0] - self.cell_size * i, snake_head[1]) if snake_direction == "LEFT" else
+                        (snake_head[0], snake_head[1] - self.cell_size * i) if snake_direction == "UP" else
+                        (snake_head[0], snake_head[1] + self.cell_size * i)
+                        for i in range(1, 6)
+                    ]
+                    if any(new_bonus.rect.topleft == pos for pos in next_positions):
+                        continue
+
+                self.bonus_objects.add(new_bonus)
+                break
 
     def update(self):
         self.snake.move()
@@ -99,10 +119,13 @@ class Game:
                         if sprite.rect.topleft == removed_segment:
                             self.snake.body_sprites.remove(sprite)
                             break
-                elif len(self.snake.body) == 1 or self.score < 0:
+                elif len(self.snake.body) == 1:
+                    self.running = False
+                if self.score < 8:
                     self.score = 0
                     self.running = False
-                self.score -= 8
+                else:
+                    self.score -= 8
 
             elif isinstance(obj, Bomb):
                 self.running = False
@@ -170,3 +193,21 @@ class Game:
             self.render(screen)
             pygame.display.flip()
             self.clock.tick(self.game_speed)
+
+        death_window = DeathWindow(
+            self.screen_width, self.screen_height, self.score, self.language)
+        while True:
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            action = death_window.handle_events(events)
+            if action == "restart":
+                return "restart"
+            elif action == "menu":
+                return "menu"
+
+            death_window.render(screen)
+            pygame.display.flip()
