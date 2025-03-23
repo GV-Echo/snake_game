@@ -120,7 +120,7 @@ class Snake(pygame.sprite.Sprite):
            (direction == "RIGHT" and self.direction != "LEFT"):
             self.direction = direction
 
-    def move(self):
+    def move(self, border_mode):
         head_x, head_y = self.body[0]
         if self.direction == "UP":
             head_y -= self.cell_size
@@ -131,13 +131,18 @@ class Snake(pygame.sprite.Sprite):
         elif self.direction == "RIGHT":
             head_x += self.cell_size
 
-        head_x %= self.screen_width
-        head_y %= self.screen_height
+        if border_mode:
+            if head_x < 0 or head_x >= self.screen_width or head_y < 0 or head_y >= self.screen_height:
+                return False
+        else:
+            head_x %= self.screen_width
+            head_y %= self.screen_height
 
         self.body.insert(0, (head_x, head_y))
         self.body.pop()
 
         self.update_sprites()
+        return True
 
     def grow(self):
         self.body.append(self.body[-1])

@@ -10,7 +10,8 @@ from src.ui.death_window import DeathWindow
 
 
 class Game:
-    def __init__(self, screen_width, screen_height, language="en"):
+    def __init__(self, screen_width, screen_height, language="en", border_mode=True):
+        self.border_mode = border_mode
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.cell_size = CELL_SIZE
@@ -83,7 +84,8 @@ class Game:
                 break
 
     def update(self):
-        self.snake.move()
+        if not self.snake.move(border_mode=self.border_mode):
+            self.running = False
         current_time = time.time()
 
         self.spawn_food(current_time)

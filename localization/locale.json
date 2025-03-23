@@ -10,7 +10,10 @@
       "apply_name": "Save",
       "back": "Back",
       "restart": "Restart",
-      "menu": "Main Menu"
+      "menu": "Main Menu",
+      "border_mode": "Mode: ",
+      "border_on": "With borders",
+      "border_off": "Without borders"
     },
     "music_states": {
       "on": "On",
@@ -35,7 +38,10 @@
       "apply_name": "Сохранить",
       "back": "Назад",
       "restart": "Рестарт",
-      "menu": "Главное меню"
+      "menu": "Главное меню",
+      "border_mode": "Режим: ",
+      "border_on": "С полями",
+      "border_off": "Без полей"
     },
     "music_states": {
       "on": "Вкл",

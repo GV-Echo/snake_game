@@ -5,7 +5,7 @@ from config.const import LOCALE_FILENAME, SETTINGS_FILENAME, SOUND_ICON_ON, SOUN
 
 
 class SettingsMenu:
-    def __init__(self, screen_width, screen_height, language="en", sound_enabled=True, username="Player"):
+    def __init__(self, screen_width, screen_height, language="en", sound_enabled=True, username="Player", border_mode=False):
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.language = language
@@ -21,6 +21,7 @@ class SettingsMenu:
         self.sound_icon_off = None
         self.flag_icon_en = None
         self.flag_icon_ru = None
+        self.border_mode = border_mode
         self.load_settings()
         self.initialize()
 
@@ -72,8 +73,14 @@ class SettingsMenu:
             "action": self.apply_name
         }
 
+        self.border_mode_button = {
+            "rect": pygame.Rect(self.screen_width // 2 - 190, button_y_start + 150, 400, button_height),
+            "text": f"{self.texts['buttons']['border_mode']}{self.texts['buttons']['border_on'] if self.border_mode else self.texts['buttons']['border_off']}",
+            "action": self.toggle_border_mode
+        }
+
         self.buttons.append({
-            "rect": pygame.Rect(self.screen_width // 2 - 75, button_y_start + 150, 150, button_height),
+            "rect": pygame.Rect(self.screen_width // 2 - 75, button_y_start + 225, 150, button_height),
             "text": self.texts["buttons"]["back"],
             "action": self.go_back
         })
@@ -85,6 +92,7 @@ class SettingsMenu:
                 self.language = settings.get("language", "en")
                 self.sound_enabled = settings.get("sound_enabled", True)
                 self.username = settings.get("username", "Player")
+                self.border_mode = settings.get("border_mode", False)
                 self.input_text = self.username
         else:
             self.save_settings()
@@ -93,10 +101,19 @@ class SettingsMenu:
         settings = {
             "language": self.language,
             "sound_enabled": self.sound_enabled,
-            "username": self.username
+            "username": self.username,
+            "border_mode": self.border_mode
         }
         with open(SETTINGS_FILENAME, 'w', encoding='utf-8') as file:
             json.dump(settings, file, indent=4)
+
+    def get_settings(self):
+        return {
+            "language": self.language,
+            "sound_enabled": self.sound_enabled,
+            "username": self.username,
+            "border_mode": self.border_mode
+        }
 
     def handle_events(self, events):
         for event in events:
@@ -105,6 +122,8 @@ class SettingsMenu:
                 for button in self.buttons:
                     if button["rect"].collidepoint(mouse_pos):
                         button["action"]()
+                if self.border_mode_button["rect"].collidepoint(mouse_pos):
+                    self.border_mode_button["action"]()
                 if self.apply_button["rect"].collidepoint(mouse_pos):
                     self.apply_button["action"]()
                 if self.input_box.collidepoint(mouse_pos):
@@ -148,6 +167,20 @@ class SettingsMenu:
                 text_rect = text.get_rect(center=button["rect"].center)
                 screen.blit(text, text_rect)
 
+        border_button = self.border_mode_button
+        if border_button["rect"].collidepoint(mouse_pos):
+            pygame.draw.rect(screen, (100, 100, 100),
+                             border_button["rect"], border_radius=5)
+        else:
+            pygame.draw.rect(screen, (70, 70, 70),
+                             border_button["rect"], border_radius=5)
+
+        border_text = self.button_font.render(
+            border_button["text"], True, (255, 255, 255))
+        border_text_rect = border_text.get_rect(
+            center=border_button["rect"].center)
+        screen.blit(border_text, border_text_rect)
+
         if self.input_active:
             pygame.draw.rect(screen, (255, 200, 200), self.input_box, 2)
         elif self.input_box.collidepoint(mouse_pos):
@@ -158,7 +191,6 @@ class SettingsMenu:
         input_font = pygame.font.Font(None, 40)
         input_text = self.input_text
 
-        # Cut nickname if it overflow the width of the input field
         is_cut = False
         while input_font.size(input_text)[0] > self.input_box.width - 20:
             input_text = input_text[1:]
@@ -194,6 +226,12 @@ class SettingsMenu:
         self.buttons[1]["icon"] = self.flag_icon_en if self.language == "en" else self.flag_icon_ru
         self.apply_button["text"] = self.texts["buttons"]["apply_name"]
         self.buttons[-1]["text"] = self.texts["buttons"]["back"]
+        self.border_mode_button["text"] = f"{self.texts['buttons']['border_mode']}{self.texts['buttons']['border_on'] if self.border_mode else self.texts['buttons']['border_off']}"
+        self.save_settings()
+
+    def toggle_border_mode(self):
+        self.border_mode = not self.border_mode
+        self.border_mode_button["text"] = f"{self.texts['buttons']['border_mode']}{self.texts['buttons']['border_on'] if self.border_mode else self.texts['buttons']['border_off']}"
         self.save_settings()
 
     def apply_name(self):

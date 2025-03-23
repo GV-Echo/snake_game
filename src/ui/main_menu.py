@@ -8,7 +8,8 @@ from src.game.game import Game
 
 
 class MainMenu:
-    def __init__(self, screen_width, screen_height, language="en"):
+    def __init__(self, screen_width, screen_height, language="en", border_mode=True):
+        self.border_mode = border_mode
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.buttons = []
@@ -104,12 +105,12 @@ class MainMenu:
     def start_game(self):
         self.start_game_flag = True
         game = Game(self.screen_width, self.screen_height,
-                    language=self.language)
+                    language=self.language, border_mode=self.border_mode)
         game.run(pygame.display.get_surface())
 
     def open_settings(self):
         settings_menu = SettingsMenu(
-            self.screen_width, self.screen_height, language=self.language
+            self.screen_width, self.screen_height, language=self.language, border_mode=self.border_mode
         )
         settings_menu.running = True
 
@@ -127,7 +128,9 @@ class MainMenu:
             settings_menu.render(screen)
             pygame.display.flip()
 
-        self.language = settings_menu.language
+        updated_settings = settings_menu.get_settings()
+        self.language = updated_settings["language"]
+        self.border_mode = updated_settings["border_mode"]
         self.texts = self.load_locale()
         for i, button_id in enumerate(["start_game", "settings", "exit"]):
             self.buttons[i]["text"] = self.texts["buttons"][button_id]
