@@ -4,7 +4,7 @@ import json
 from src.game.game import Game
 from src.ui.main_menu import MainMenu
 from config.const import GAME_TITLE, SETTINGS_FILENAME, SOUNDTRACK_PATH
-
+from src.ui.settings_menu import SettingsMenu
 
 def load_settings():
     try:
@@ -23,7 +23,7 @@ def main():
     pygame.display.set_caption(GAME_TITLE)
 
     settings = load_settings()
-    lang = settings.get("language", "en")
+    language = settings.get("language", "en")
     border_mode = settings.get("border_mode", True)
     sound_enabled = settings.get("sound_enabled", True)
 
@@ -32,7 +32,7 @@ def main():
         pygame.mixer.music.play(-1)
 
     while True:
-        main_menu = MainMenu(width, height, language=lang, border_mode=border_mode)
+        main_menu = MainMenu(width, height, language=language, border_mode=border_mode)
         running = True
 
         while running:
@@ -47,13 +47,36 @@ def main():
             pygame.display.flip()
 
             if hasattr(main_menu, "start_game_flag") and main_menu.start_game_flag:
-                game = Game(width, height, language=main_menu.language, border_mode=main_menu.border_mode)
+                game = Game(width, height, language=language, border_mode=border_mode)
                 result = game.run(screen)
 
                 if result == "restart":
                     continue
                 elif result == "menu":
                     break
+
+            if hasattr(main_menu, "open_settings_flag") and main_menu.open_settings_flag:
+                settings_menu = SettingsMenu(width, height, language=language, sound_enabled=sound_enabled, border_mode=border_mode)
+                settings_menu_running = True
+
+                while settings_menu_running:
+                    settings_events = pygame.event.get()
+                    for event in settings_events:
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                            sys.exit()
+
+                    settings_menu.handle_events(settings_events)
+                    settings_menu.render(screen)
+                    pygame.display.flip()
+
+                    if not getattr(settings_menu, "running", True):
+                        updated_settings = settings_menu.get_settings()
+                        language = updated_settings["language"]
+                        sound_enabled = updated_settings["sound_enabled"]
+                        border_mode = updated_settings["border_mode"]
+                        settings_menu_running = False
+                        main_menu.open_settings_flag = False
 
 
 if __name__ == "__main__":

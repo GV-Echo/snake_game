@@ -17,6 +17,8 @@ class MainMenu:
         self.button_font = None
         self.language = language
         self.texts = self.load_locale()
+        self.start_game_flag = False
+        self.open_settings_flag = False
         self.initialize()
 
     def load_locale(self):
@@ -104,36 +106,9 @@ class MainMenu:
 
     def start_game(self):
         self.start_game_flag = True
-        game = Game(self.screen_width, self.screen_height,
-                    language=self.language, border_mode=self.border_mode)
-        game.run(pygame.display.get_surface())
 
     def open_settings(self):
-        settings_menu = SettingsMenu(
-            self.screen_width, self.screen_height, language=self.language, border_mode=self.border_mode
-        )
-        settings_menu.running = True
-
-        while settings_menu.running:
-            events = pygame.event.get()
-            for event in events:
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    settings_menu.go_back()
-
-            settings_menu.handle_events(events)
-            screen = pygame.display.get_surface()
-            settings_menu.render(screen)
-            pygame.display.flip()
-
-        updated_settings = settings_menu.get_settings()
-        self.language = updated_settings["language"]
-        self.border_mode = updated_settings["border_mode"]
-        self.texts = self.load_locale()
-        for i, button_id in enumerate(["start_game", "settings", "exit"]):
-            self.buttons[i]["text"] = self.texts["buttons"][button_id]
+        self.open_settings_flag = True
 
     def exit_game(self):
         pygame.quit()
