@@ -2,7 +2,7 @@
   "en": {
     "title": "Snake 2025",
     "buttons": {
-      "start_game": "Start Game",
+      "start_game": "Start game",
       "settings": "Settings",
       "exit": "Exit",
       "music": "Music: ",
@@ -14,7 +14,9 @@
       "menu": "Main menu",
       "border_mode": "Mode: ",
       "border_on": "With borders",
-      "border_off": "Without borders"
+      "border_off": "Without borders",
+      "help": "Help",
+      "top_players": "Top players"
     },
     "music_states": {
       "on": "On",
@@ -27,7 +29,32 @@
     "settings_title": "Settings",
     "score_label": "SCORE",
     "game_over": "Game Over",
-    "pause_title": "Pause"
+    "pause_title": "Pause",
+    "rating_window": {
+      "title": "Player Ratings",
+      "back_button": "Back"
+    },
+    "help_window": {
+      "help_title": "Help",
+      "help_content": [
+        "Controls:",
+        "- Arrow keys: Move the snake",
+        "- P/З: Buttons for pausing the game",
+        "",
+        "Game Objects:",
+        "- Food: Increases snake size and score",
+        "- Poisoned Food: Decreases snake size and score",
+        "- Bomb: Ends the game immediately",
+        "- Speedup: Doubles snake speed temporarily",
+        "- Clock: Slows down snake speed temporarily",
+        "- Double Points: Doubles score for a limited time",
+        "- Inverted Controls: Reverses controls temporarily",
+        "",
+        "Game Modes:",
+        "- With Borders: Hitting the wall ends the game",
+        "- Without Borders: Snake wraps around the screen"
+      ]
+    }
   },
   "ru": {
     "title": "Змейка 2025",
@@ -44,7 +71,9 @@
       "menu": "Главное меню",
       "border_mode": "Режим: ",
       "border_on": "С полями",
-      "border_off": "Без полей"
+      "border_off": "Без полей",
+      "help": "Помощь",
+      "top_players": "Топ игроков"
     },
     "music_states": {
       "on": "Вкл",
@@ -57,6 +86,31 @@
     "settings_title": "Настройки",
     "score_label": "ОЧКИ",
     "game_over": "Игра окончена",
-    "pause_title": "Пауза"
+    "pause_title": "Пауза",
+    "rating_window": {
+      "title": "Рейтинг игроков",
+      "back_button": "Назад"
+    },
+    "help_window": {
+      "help_title": "Помощь",
+      "help_content": [
+        "Управление:",
+        "- Стрелки: Движение змейки",
+        "- З/P: Кнопки для приостановки игры",
+        "",
+        "Игровые объекты:",
+        "- Еда: Увеличивает размер змейки и очки",
+        "- Яд: Уменьшает размер змейки и очки",
+        "- Бомба: Мгновенно завершает игру",
+        "- Ускорение: Удваивает скорость змейки на время",
+        "- Часы: Замедляют скорость змейки на время",
+        "- Двойные очки: Удваивают очки на время",
+        "- Инверсия: Переворачивает управление на время",
+        "",
+        "Режимы игры:",
+        "- С полями: Столкновение со стеной завершает игру",
+        "- Без полей: Змейка проходит через стену и появляется с другой стороны"
+      ]
+    }
   }
 }

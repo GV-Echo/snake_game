@@ -8,6 +8,7 @@ from src.game.snake import Snake
 from src.game.game_objects import Food, PoisonedFood, Bomb, Speedup, Clock, DoublePoints, InvertedControls
 from src.ui.death_window import DeathWindow
 from src.ui.pause_menu import PauseMenu
+from config.scores_work import update_best_score
 
 
 class Game:
@@ -38,9 +39,7 @@ class Game:
         )
 
     def load_locale(self):
-        locale_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                                   "localization", LOCALE_FILENAME)
-        with open(locale_path, 'r', encoding='utf-8') as file:
+        with open(LOCALE_FILENAME, 'r', encoding='utf-8') as file:
             localization_data = json.load(file)
             return localization_data[self.language]
 
@@ -213,6 +212,8 @@ class Game:
             self.render(screen)
             pygame.display.flip()
             self.clock.tick(self.game_speed)
+
+        update_best_score(self.snake.username, self.score)
 
         death_window = DeathWindow(
             self.screen_width, self.screen_height, self.score, self.language)

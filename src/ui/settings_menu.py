@@ -5,7 +5,8 @@ from config.const import LOCALE_FILENAME, SETTINGS_FILENAME, SOUND_ICON_ON, SOUN
 
 
 class SettingsMenu:
-    def __init__(self, screen_width, screen_height, language="en", sound_enabled=True, username="Player", border_mode=False):
+    def __init__(self, screen_width, screen_height, language="en", sound_enabled=True, username="Player",
+                 border_mode=False):
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.language = language
@@ -26,9 +27,7 @@ class SettingsMenu:
         self.initialize()
 
     def load_locale(self):
-        locale_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                                   "localization", LOCALE_FILENAME)
-        with open(locale_path, 'r', encoding='utf-8') as file:
+        with open(LOCALE_FILENAME, 'r', encoding='utf-8') as file:
             localization_data = json.load(file)
             self.texts = localization_data[self.language]
 
@@ -200,7 +199,7 @@ class SettingsMenu:
 
         input_surface = input_font.render(input_text, True, (255, 255, 255))
         screen.blit(input_surface, (self.input_box.x +
-                    10, self.input_box.y + 10))
+                                    10, self.input_box.y + 10))
 
         if self.apply_button["rect"].collidepoint(mouse_pos):
             pygame.draw.rect(screen, (100, 100, 100),
@@ -230,17 +229,18 @@ class SettingsMenu:
         self.buttons[1]["icon"] = self.flag_icon_en if self.language == "en" else self.flag_icon_ru
         self.apply_button["text"] = self.texts["buttons"]["apply_name"]
         self.buttons[-1]["text"] = self.texts["buttons"]["back"]
-        self.border_mode_button["text"] = f"{self.texts['buttons']['border_mode']}{self.texts['buttons']['border_on'] if self.border_mode else self.texts['buttons']['border_off']}"
+        self.border_mode_button[
+            "text"] = f"{self.texts['buttons']['border_mode']}{self.texts['buttons']['border_on'] if self.border_mode else self.texts['buttons']['border_off']}"
         self.save_settings()
 
     def toggle_border_mode(self):
         self.border_mode = not self.border_mode
-        self.border_mode_button["text"] = f"{self.texts['buttons']['border_mode']}{self.texts['buttons']['border_on'] if self.border_mode else self.texts['buttons']['border_off']}"
+        self.border_mode_button[
+            "text"] = f"{self.texts['buttons']['border_mode']}{self.texts['buttons']['border_on'] if self.border_mode else self.texts['buttons']['border_off']}"
         self.save_settings()
 
     def apply_name(self):
         self.username = self.input_text
-        print(f"Username applied: {self.username}")
         self.save_settings()
 
     def go_back(self):

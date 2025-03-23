@@ -1,10 +1,7 @@
 #####################
 # String constants #
 #####################
-LOCALE_FILENAME = 'locale.json'
 GAME_TITLE = 'SNAKE 2025'
-SETTINGS_FILENAME = 'db/settings.json'
-
 
 #####################
 # Numeric constants #
@@ -12,7 +9,6 @@ SETTINGS_FILENAME = 'db/settings.json'
 WINDOW_SIZE = (800, 600)
 CELL_SIZE = 25
 GAME_SPEED = 10
-
 
 ##################
 # Path to images #
@@ -49,8 +45,10 @@ SNAKE_IMAGES = {
     "tail_right": "data/snake/tail_right.png",
 }
 
-
-##############
-# Music path #
-##############
+###################
+# Data files path #
+###################
 SOUNDTRACK_PATH = "data/music/plenka everything that I can't forget.mp3"
+BEST_SCORES_FILE = "db/best_scores.csv"
+LOCALE_FILENAME = 'localization/locale.json'
+SETTINGS_FILENAME = 'db/settings.json'

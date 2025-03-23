@@ -16,9 +16,7 @@ class PauseMenu:
         self.buttons = self.initialize_buttons()
 
     def load_locale(self):
-        locale_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                                   "localization", LOCALE_FILENAME)
-        with open(locale_path, 'r', encoding='utf-8') as file:
+        with open(LOCALE_FILENAME, 'r', encoding='utf-8') as file:
             localization_data = json.load(file)
             return localization_data[self.language]
 
@@ -36,7 +34,8 @@ class PauseMenu:
                 "action": "resume"
             },
             {
-                "rect": pygame.Rect(button_x_start + button_width + button_spacing, button_y, button_width, button_height),
+                "rect": pygame.Rect(button_x_start + button_width + button_spacing, button_y, button_width,
+                                    button_height),
                 "text": self.texts["buttons"]["menu"],
                 "action": "menu"
             }

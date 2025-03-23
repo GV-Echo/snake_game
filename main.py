@@ -1,10 +1,13 @@
 import pygame
 import sys
 import json
+import csv
+import os
 from src.game.game import Game
 from src.ui.main_menu import MainMenu
 from config.const import GAME_TITLE, SETTINGS_FILENAME, SOUNDTRACK_PATH
 from src.ui.settings_menu import SettingsMenu
+
 
 def load_settings():
     try:
@@ -26,13 +29,16 @@ def main():
     language = settings.get("language", "en")
     border_mode = settings.get("border_mode", True)
     sound_enabled = settings.get("sound_enabled", True)
+    username = settings.get("username", "Player")
 
     pygame.mixer.music.load(SOUNDTRACK_PATH)
-    if sound_enabled:
-        pygame.mixer.music.play(-1)
+    pygame.mixer.music.play(-1)
+    if not sound_enabled:
+        pygame.mixer.music.pause()
 
     while True:
-        main_menu = MainMenu(width, height, language=language, border_mode=border_mode)
+        main_menu = MainMenu(
+            width, height, language=language, border_mode=border_mode)
         running = True
 
         while running:
@@ -47,7 +53,9 @@ def main():
             pygame.display.flip()
 
             if hasattr(main_menu, "start_game_flag") and main_menu.start_game_flag:
-                game = Game(width, height, language=language, border_mode=border_mode)
+                game = Game(width, height, language=language,
+                            border_mode=border_mode)
+                game.snake.username = username
                 result = game.run(screen)
 
                 if result == "restart":
@@ -56,7 +64,8 @@ def main():
                     break
 
             if hasattr(main_menu, "open_settings_flag") and main_menu.open_settings_flag:
-                settings_menu = SettingsMenu(width, height, language=language, sound_enabled=sound_enabled, border_mode=border_mode)
+                settings_menu = SettingsMenu(
+                    width, height, language=language, sound_enabled=sound_enabled, border_mode=border_mode)
                 settings_menu_running = True
 
                 while settings_menu_running:

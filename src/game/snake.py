@@ -92,16 +92,16 @@ class Snake(pygame.sprite.Sprite):
             return self.images["body_horizontal"]
         else:
             if (prev_segment[0] < segment[0] and next_segment[1] < segment[1]) or \
-               (next_segment[0] < segment[0] and prev_segment[1] < segment[1]):
+                    (next_segment[0] < segment[0] and prev_segment[1] < segment[1]):
                 return self.images["body_topleft"]
             elif (prev_segment[0] > segment[0] and next_segment[1] < segment[1]) or \
-                 (next_segment[0] > segment[0] and prev_segment[1] < segment[1]):
+                    (next_segment[0] > segment[0] and prev_segment[1] < segment[1]):
                 return self.images["body_topright"]
             elif (prev_segment[0] < segment[0] and next_segment[1] > segment[1]) or \
-                 (next_segment[0] < segment[0] and prev_segment[1] > segment[1]):
+                    (next_segment[0] < segment[0] and prev_segment[1] > segment[1]):
                 return self.images["body_bottomleft"]
             elif (prev_segment[0] > segment[0] and next_segment[1] > segment[1]) or \
-                 (next_segment[0] > segment[0] and prev_segment[1] > segment[1]):
+                    (next_segment[0] > segment[0] and prev_segment[1] > segment[1]):
                 return self.images["body_bottomright"]
 
     def change_direction(self, direction):
@@ -116,9 +116,9 @@ class Snake(pygame.sprite.Sprite):
                 direction = "LEFT"
 
         if (direction == "UP" and self.direction != "DOWN") or \
-           (direction == "DOWN" and self.direction != "UP") or \
-           (direction == "LEFT" and self.direction != "RIGHT") or \
-           (direction == "RIGHT" and self.direction != "LEFT"):
+                (direction == "DOWN" and self.direction != "UP") or \
+                (direction == "LEFT" and self.direction != "RIGHT") or \
+                (direction == "RIGHT" and self.direction != "LEFT"):
             self.next_direction = direction
 
     def move(self, border_mode):

@@ -3,6 +3,8 @@ import sys
 import json
 import os
 from config.const import LOCALE_FILENAME
+from src.ui.rating_window import RatingWindow
+from src.ui.help_window import HelpWindow
 
 
 class MainMenu:
@@ -20,16 +22,13 @@ class MainMenu:
         self.initialize()
 
     def load_locale(self):
-        locale_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                                   "localization", LOCALE_FILENAME)
-
-        if not os.path.exists(locale_path):
-            print(f"File error: {LOCALE_FILENAME} not found at {locale_path}")
+        if not os.path.exists(LOCALE_FILENAME):
+            print(f"File error: {LOCALE_FILENAME} not found")
             pygame.quit()
             sys.exit(1)
 
         try:
-            with open(locale_path, 'r', encoding='utf-8') as file:
+            with open(LOCALE_FILENAME, 'r', encoding='utf-8') as file:
                 localization_data = json.load(file)
                 return localization_data[self.language]
 
@@ -43,24 +42,48 @@ class MainMenu:
         self.title_font = pygame.font.Font(None, 80)
         self.button_font = pygame.font.Font(None, 50)
 
-        button_width = 210
+        button_width = 220
         button_height = 50
-        button_x = self.screen_width // 2 - button_width // 2
-        button_y_start = self.screen_height // 2 - 75
+        button_spacing = 20
+
+        first_row_y = self.screen_height // 2 - 100
+        first_row_x_start = self.screen_width // 2 - \
+                            (button_width + button_spacing // 2)
+
+        second_row_y = first_row_y + button_height + button_spacing
+        second_row_x_start = self.screen_width // 2 - \
+                             (button_width + button_spacing // 2)
+
+        third_row_y = second_row_y + button_height + button_spacing
+        third_row_x = self.screen_width // 2 - button_width // 2
 
         self.buttons = [
             {
-                "rect": pygame.Rect(button_x, button_y_start, button_width, button_height),
+                "rect": pygame.Rect(first_row_x_start, first_row_y, button_width, button_height),
                 "text": self.texts["buttons"]["start_game"],
                 "action": self.start_game
             },
             {
-                "rect": pygame.Rect(button_x, button_y_start + 75, button_width, button_height),
+                "rect": pygame.Rect(first_row_x_start + button_width + button_spacing, first_row_y, button_width,
+                                    button_height),
                 "text": self.texts["buttons"]["settings"],
                 "action": self.open_settings
             },
+
             {
-                "rect": pygame.Rect(button_x, button_y_start + 150, button_width, button_height),
+                "rect": pygame.Rect(second_row_x_start, second_row_y, button_width, button_height),
+                "text": self.texts["buttons"]["help"],
+                "action": self.show_help
+            },
+            {
+                "rect": pygame.Rect(second_row_x_start + button_width + button_spacing, second_row_y, button_width,
+                                    button_height),
+                "text": self.texts["buttons"]["top_players"],
+                "action": self.show_top_players
+            },
+
+            {
+                "rect": pygame.Rect(third_row_x, third_row_y, button_width, button_height),
                 "text": self.texts["buttons"]["exit"],
                 "action": self.exit_game
             }
@@ -99,7 +122,7 @@ class MainMenu:
         self.language = language
         self.texts = self.load_locale()
 
-        for i, button_id in enumerate(["start_game", "settings", "exit"]):
+        for i, button_id in enumerate(["start_game", "settings", "help", "top_players", "exit"]):
             self.buttons[i]["text"] = self.texts["buttons"][button_id]
 
     def start_game(self):
@@ -107,6 +130,42 @@ class MainMenu:
 
     def open_settings(self):
         self.open_settings_flag = True
+
+    def show_help(self):
+        help_window = HelpWindow(self.screen_width, self.screen_height, self.language)
+        running = True
+
+        while running:
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            action = help_window.handle_events(events)
+            if action == "menu":
+                running = False
+
+            help_window.render(pygame.display.get_surface())
+            pygame.display.flip()
+
+    def show_top_players(self):
+        rating_window = RatingWindow(self.screen_width, self.screen_height, self.language)
+        running = True
+
+        while running:
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            action = rating_window.handle_events(events)
+            if action == "menu":
+                running = False
+
+            rating_window.render(pygame.display.get_surface())
+            pygame.display.flip()
 
     def exit_game(self):
         pygame.quit()
