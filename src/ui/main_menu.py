@@ -3,8 +3,6 @@ import sys
 import json
 import os
 from config.const import LOCALE_FILENAME
-from src.ui.settings_menu import SettingsMenu
-from src.game.game import Game
 
 
 class MainMenu:

@@ -7,6 +7,7 @@ from config.const import CELL_SIZE, GAME_SPEED, LOCALE_FILENAME, BACKGROUND_IMAG
 from src.game.snake import Snake
 from src.game.game_objects import Food, PoisonedFood, Bomb, Speedup, Clock, DoublePoints, InvertedControls
 from src.ui.death_window import DeathWindow
+from src.ui.pause_menu import PauseMenu
 
 
 class Game:
@@ -28,6 +29,8 @@ class Game:
         self.game_speed = GAME_SPEED
         self.score_multiplier = 1
         self.last_spawn_time = {}
+        self.pause_menu = PauseMenu(screen_width, screen_height, language)
+        self.paused = False
 
         self.background = pygame.image.load(BACKGROUND_IMAGE).convert()
         self.background = pygame.transform.scale(
@@ -55,6 +58,8 @@ class Game:
                     self.snake.change_direction("LEFT")
                 elif event.key == pygame.K_RIGHT:
                     self.snake.change_direction("RIGHT")
+                elif event.key == pygame.K_p or event.unicode.lower() == 'з':
+                    self.paused = not self.paused
 
     def spawn_bonus(self, bonus_class):
         max_count = bonus_class(
@@ -190,6 +195,19 @@ class Game:
 
     def run(self, screen):
         while self.running:
+            if self.paused:
+                events = pygame.event.get()
+                action = self.pause_menu.handle_events(events)
+                if action == "resume":
+                    self.paused = False
+                elif action == "menu":
+                    return "menu"
+
+                self.pause_menu.render(screen)
+                pygame.display.flip()
+                self.clock.tick(10)
+                continue
+
             self.handle_events()
             self.update()
             self.render(screen)

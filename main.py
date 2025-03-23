@@ -77,6 +77,7 @@ def main():
                         border_mode = updated_settings["border_mode"]
                         settings_menu_running = False
                         main_menu.open_settings_flag = False
+                        running = False
 
 
 if __name__ == "__main__":
