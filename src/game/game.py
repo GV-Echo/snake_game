@@ -127,6 +127,9 @@ class Game:
                 self.snake.grow()
                 self.score += 10 * self.score_multiplier
 
+        if not any(isinstance(obj, Food) for obj in self.bonus_objects):
+            self.spawn_bonus(Food)
+
         if self.snake.check_self_collision():
             self.running = False
 

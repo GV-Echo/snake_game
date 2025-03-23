@@ -5,7 +5,7 @@ from src.ui.main_menu import MainMenu
 from config.const import GAME_TITLE, SETTINGS_FILENAME
 
 
-def load_settings():
+def load_language():
     try:
         with open(SETTINGS_FILENAME, 'r', encoding='utf-8') as file:
             settings = json.load(file)
@@ -20,11 +20,11 @@ def main():
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption(GAME_TITLE)
 
-    language = load_settings()
-    if not language:
-        language = "en"
+    lang = load_language()
+    if not lang:
+        lang = "en"
 
-    main_menu = MainMenu(width, height, language=language)
+    main_menu = MainMenu(width, height, language=lang)
 
     running = True
 
