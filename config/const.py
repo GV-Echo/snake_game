@@ -48,3 +48,9 @@ SNAKE_IMAGES = {
     "tail_left": "data/snake/tail_left.png",
     "tail_right": "data/snake/tail_right.png",
 }
+
+
+##############
+# Music path #
+##############
+SOUNDTRACK_PATH = "data/music/plenka everything that I can't forget.mp3"

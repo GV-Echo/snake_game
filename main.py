@@ -3,7 +3,7 @@ import sys
 import json
 from src.game.game import Game
 from src.ui.main_menu import MainMenu
-from config.const import GAME_TITLE, SETTINGS_FILENAME
+from config.const import GAME_TITLE, SETTINGS_FILENAME, SOUNDTRACK_PATH
 
 
 def load_settings():
@@ -12,11 +12,12 @@ def load_settings():
             return json.load(file)
     except (json.JSONDecodeError, FileNotFoundError) as e:
         print(f"Error while loading settings: {e}")
-        return {"language": "en", "border_mode": True}
+        return {"language": "en", "border_mode": True, "sound_enabled": True}
 
 
 def main():
     pygame.init()
+    pygame.mixer.init()
     width, height = 800, 600
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption(GAME_TITLE)
@@ -24,6 +25,11 @@ def main():
     settings = load_settings()
     lang = settings.get("language", "en")
     border_mode = settings.get("border_mode", True)
+    sound_enabled = settings.get("sound_enabled", True)
+
+    pygame.mixer.music.load(SOUNDTRACK_PATH)
+    if sound_enabled:
+        pygame.mixer.music.play(-1)
 
     while True:
         main_menu = MainMenu(width, height, language=lang, border_mode=border_mode)

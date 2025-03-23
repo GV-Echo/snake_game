@@ -219,6 +219,10 @@ class SettingsMenu:
         self.sound_enabled = not self.sound_enabled
         self.buttons[0]["icon"] = self.sound_icon_on if self.sound_enabled else self.sound_icon_off
         self.save_settings()
+        if self.sound_enabled:
+            pygame.mixer.music.unpause()
+        else:
+            pygame.mixer.music.pause()
 
     def toggle_language(self):
         self.language = "ru" if self.language == "en" else "en"
