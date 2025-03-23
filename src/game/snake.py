@@ -10,6 +10,7 @@ class Snake(pygame.sprite.Sprite):
         self.screen_height = screen_height
         self.body = [(100, 100), (80, 100), (60, 100)]
         self.direction = "RIGHT"
+        self.next_direction = "RIGHT"
         self.inverted_controls = False
 
         self.images = {key: pygame.image.load(path).convert_alpha()
@@ -118,9 +119,11 @@ class Snake(pygame.sprite.Sprite):
            (direction == "DOWN" and self.direction != "UP") or \
            (direction == "LEFT" and self.direction != "RIGHT") or \
            (direction == "RIGHT" and self.direction != "LEFT"):
-            self.direction = direction
+            self.next_direction = direction
 
     def move(self, border_mode):
+        self.direction = self.next_direction
+
         head_x, head_y = self.body[0]
         if self.direction == "UP":
             head_y -= self.cell_size
