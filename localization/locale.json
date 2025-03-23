@@ -54,6 +54,12 @@
         "- With Borders: Hitting the wall ends the game",
         "- Without Borders: Snake wraps around the screen"
       ]
+    },
+    "effects": {
+      "speed_boost": "Speed Boost",
+      "slow_down": "Slow Down",
+      "double_points": "Double Points",
+      "inverted_controls": "Inverted Controls"
     }
   },
   "ru": {
@@ -111,6 +117,12 @@
         "- С полями: Столкновение со стеной завершает игру",
         "- Без полей: Змейка проходит через стену и появляется с другой стороны"
       ]
+    },
+    "effects": {
+      "speed_boost": "Ускорение",
+      "slow_down": "Замедление",
+      "double_points": "Двойные очки", 
+      "inverted_controls": "Инверсия"
     }
   }
 }

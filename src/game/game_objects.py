@@ -90,7 +90,6 @@ class DoublePoints(GameObject):
     def __init__(self, cell_size, screen_width, screen_height):
         super().__init__(cell_size, screen_width, screen_height, max_count=1,
                          lifetime=60, spawn_interval=30, color=(255, 165, 0))
-        # Загрузка изображения для удвоения очков
         self.image = pygame.image.load(DOUBLE_POINTS_IMAGE).convert_alpha()
         self.image = pygame.transform.scale(self.image, (cell_size, cell_size))
 

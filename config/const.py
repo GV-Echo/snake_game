@@ -23,8 +23,8 @@ INVERTED_CONTROLS_IMAGE = 'data/food/InvertedControls.png'
 DOUBLE_POINTS_IMAGE = 'data/food/DoublePoints.png'
 POISONED_FOOD_IMAGE = 'data/food/PoisonedFood.png'
 SPEEDUP_IMAGE = 'data/food/Speedup.png'
-BOMB_IMAGE = "data/food/Bomb/bomb1.png"
-CLOCK_IMAGE = "data/food/Clock/clock1.png"
+BOMB_IMAGE = "data/food/Bomb.png"
+CLOCK_IMAGE = "data/food/Сlock.png"
 
 BACKGROUND_IMAGE = 'data/background/grass.png'
 

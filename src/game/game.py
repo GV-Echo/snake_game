@@ -71,6 +71,10 @@ class Game:
                 if any(new_bonus.rect.colliderect(obj.rect) for obj in self.bonus_objects):
                     continue
 
+                new_bonus_pos = new_bonus.rect.topleft
+                if any(new_bonus_pos == body_pos for body_pos in self.snake.body):
+                    continue
+
                 if bonus_class == Bomb:
                     snake_head = self.snake.body[0]
                     snake_direction = self.snake.direction
@@ -136,20 +140,26 @@ class Game:
             elif isinstance(obj, Bomb):
                 self.running = False
             elif isinstance(obj, Speedup):
-                self.active_effects.append(("Speed Boost", time.time() + 15))
-                self.game_speed *= 2
+                self.remove_effect(self.texts["effects"]["speed_boost"])
+                self.remove_effect(self.texts["effects"]["slow_down"])
+                self.active_effects.append((self.texts["effects"]["speed_boost"], time.time() + 15))
+                self.game_speed = GAME_SPEED * 2
                 self.score += 3 * self.score_multiplier
             elif isinstance(obj, Clock):
-                self.active_effects.append(("Slow Down", time.time() + 15))
-                self.game_speed //= 1.5
+                self.remove_effect(self.texts["effects"]["speed_boost"])
+                self.remove_effect(self.texts["effects"]["slow_down"])
+                self.active_effects.append((self.texts["effects"]["slow_down"], time.time() + 15))
+                self.game_speed = GAME_SPEED // 1.5
                 self.score += 3 * self.score_multiplier
             elif isinstance(obj, DoublePoints):
-                self.active_effects.append(("Double Points", time.time() + 60))
+                self.remove_effect(self.texts["effects"]["double_points"])
+                self.active_effects.append((self.texts["effects"]["double_points"], time.time() + 60))
                 self.score_multiplier = 2
                 self.score += 5 * self.score_multiplier
             elif isinstance(obj, InvertedControls):
+                self.remove_effect(self.texts["effects"]["inverted_controls"])
                 self.active_effects.append(
-                    ("Inverted Controls", time.time() + 15))
+                    (self.texts["effects"]["inverted_controls"], time.time() + 15))
                 self.snake.inverted_controls = True
                 self.score += 9 * self.score_multiplier
             elif isinstance(obj, Food):
@@ -162,15 +172,25 @@ class Game:
         if self.snake.check_self_collision():
             self.running = False
 
+    def remove_effect(self, effect_name):
+        self.active_effects = [
+            effect for effect in self.active_effects
+            if effect[0] != effect_name
+        ]
+
     def update_active_effects(self, current_time):
         self.active_effects = [
             effect for effect in self.active_effects if effect[1] > current_time
         ]
-        if not any(effect[0] in ["Speed Boost", "Slow Down"] for effect in self.active_effects):
-            self.game_speed = 10
-        if not any(effect[0] == "Double Points" for effect in self.active_effects):
+        if not any(effect[0] in [self.texts["effects"]["speed_boost"], 
+                                self.texts["effects"]["slow_down"]] 
+                for effect in self.active_effects):
+            self.game_speed = GAME_SPEED
+        if not any(effect[0] == self.texts["effects"]["double_points"] 
+                for effect in self.active_effects):
             self.score_multiplier = 1
-        if not any(effect[0] == "Inverted Controls" for effect in self.active_effects):
+        if not any(effect[0] == self.texts["effects"]["inverted_controls"] 
+                for effect in self.active_effects):
             self.snake.inverted_controls = False
 
     def render(self, screen):
