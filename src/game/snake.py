@@ -86,22 +86,37 @@ class Snake(pygame.sprite.Sprite):
             f"Не удалось определить направление хвоста: tail={tail}, before_tail={before_tail}")
 
     def get_body_image(self, prev_segment, segment, next_segment):
-        if prev_segment[0] == next_segment[0]:
+        def normalize_diff(a, b, max_val):
+            diff = a - b
+            if abs(diff) > max_val / 2:
+                if diff > 0:
+                    diff -= max_val
+                else:
+                    diff += max_val
+
+            return diff
+
+        dx_prev = normalize_diff(
+            segment[0], prev_segment[0], self.screen_width)
+        dy_prev = normalize_diff(
+            segment[1], prev_segment[1], self.screen_height)
+        dx_next = normalize_diff(
+            segment[0], next_segment[0], self.screen_width)
+        dy_next = normalize_diff(
+            segment[1], next_segment[1], self.screen_height)
+
+        if dx_prev == 0 and dx_next == 0:
             return self.images["body_vertical"]
-        elif prev_segment[1] == next_segment[1]:
+        elif dy_prev == 0 and dy_next == 0:
             return self.images["body_horizontal"]
         else:
-            if (prev_segment[0] < segment[0] and next_segment[1] < segment[1]) or \
-                    (next_segment[0] < segment[0] and prev_segment[1] < segment[1]):
+            if (dx_prev > 0 and dy_next > 0) or (dx_next > 0 and dy_prev > 0):
                 return self.images["body_topleft"]
-            elif (prev_segment[0] > segment[0] and next_segment[1] < segment[1]) or \
-                    (next_segment[0] > segment[0] and prev_segment[1] < segment[1]):
+            elif (dx_prev < 0 and dy_next > 0) or (dx_next < 0 and dy_prev > 0):
                 return self.images["body_topright"]
-            elif (prev_segment[0] < segment[0] and next_segment[1] > segment[1]) or \
-                    (next_segment[0] < segment[0] and prev_segment[1] > segment[1]):
+            elif (dx_prev > 0 and dy_next < 0) or (dx_next > 0 and dy_prev < 0):
                 return self.images["body_bottomleft"]
-            elif (prev_segment[0] > segment[0] and next_segment[1] > segment[1]) or \
-                    (next_segment[0] > segment[0] and prev_segment[1] > segment[1]):
+            elif (dx_prev < 0 and dy_next < 0) or (dx_next < 0 and dy_prev < 0):
                 return self.images["body_bottomright"]
 
     def change_direction(self, direction):
