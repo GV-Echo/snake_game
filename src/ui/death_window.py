@@ -1,7 +1,6 @@
 import pygame
 import json
-import os
-from config.const import SETTINGS_FILENAME, LOCALE_FILENAME
+from config.const import LOCALE_FILENAME
 
 
 class DeathWindow:

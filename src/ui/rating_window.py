@@ -1,4 +1,3 @@
-import os
 import pygame
 import json
 from config.scores_work import load_best_scores

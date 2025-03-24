@@ -1,5 +1,5 @@
 #####################
-# String constants #
+# String constants  #
 #####################
 GAME_TITLE = 'SNAKE 2025'
 

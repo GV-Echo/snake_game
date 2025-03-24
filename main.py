@@ -1,8 +1,6 @@
 import pygame
 import sys
 import json
-import csv
-import os
 from src.game.game import Game
 from src.ui.main_menu import MainMenu
 from config.const import GAME_TITLE, SETTINGS_FILENAME, SOUNDTRACK_PATH

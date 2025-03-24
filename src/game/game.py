@@ -1,6 +1,5 @@
 import pygame
 import sys
-import os
 import json
 import time
 from config.const import CELL_SIZE, GAME_SPEED, LOCALE_FILENAME, BACKGROUND_IMAGE

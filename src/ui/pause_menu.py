@@ -1,6 +1,5 @@
 import sys
 import pygame
-import os
 import json
 from config.const import LOCALE_FILENAME
 
